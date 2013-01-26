@@ -1,0 +1,9 @@
+body {
+	color: #333333;
+	background-color: #ffffff;
+}
+
+body, p, a, div, td, th, input, select, textarea {
+	font-size: 10px;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}

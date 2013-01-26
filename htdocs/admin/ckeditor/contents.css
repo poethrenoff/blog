@@ -1,0 +1,59 @@
+/*
+Copyright (c) 2003-2011, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.html or http://ckeditor.com/license
+*/
+
+body
+{
+	/* Text color */
+	color: #333333;
+
+	/* Remove the background color to make it transparent */
+	background-color: #ffffff;
+}
+
+body, p, a, div, td, th, input, select, textarea {
+	/* Font */
+	font-size: 12px;
+	font-family: Helvetica, sans-serif;
+}
+
+h1, h2, h3 {
+	color: #e76f00;
+	font-weight: bold;
+	margin: 0px 0px 10px 50px;
+}
+h1 {
+	font-size: 18px;
+}
+h2 {
+	font-size: 16px;
+}
+h3 {
+	font-size: 14px;
+}
+
+a {
+	color: #0066aa;
+}
+
+a:hover {
+	color: #e76f00;
+}
+
+a img {
+	border: none;
+}
+
+ol, ul {
+	margin: 0px;
+	padding-left: 50px;
+}
+
+pre {
+	display: block;
+	font-size: 12px;
+	font-family: monospace;
+	margin: 0px 0px 0px 30px;
+	color: #660000;
+}
