@@ -20,7 +20,7 @@
 			{$search_item.search_index}.
 		</td>
 		<td>
-			<span class="title"><a href="{$search_item.news_url}">{$search_item.news_date}</a></span><br/>{$search_item.news_content}
+			<span class="title"><a href="{$search_item.news_url}">{$search_item.news_date}</a></span><p>{$search_item.news_content}</p>
 		</td>
 	</tr>
 </table>

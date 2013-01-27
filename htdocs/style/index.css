@@ -1,66 +1,49 @@
 body {
 	padding: 0px;
 	margin: 0px;
-	color: #333333;
+	color: #444444;
 	background-color: #ffffff;
 }
 
 p, a, div, td, input, textarea, select {
-	font-size: 12px;
+	font-size: 14px;
 	font-family: Helvetica, sans-serif;
 }
 
 div.main {
-	width: 980px;
+	width: 820px;
 	margin: auto;
-}
-
-div.outer {
-	background-image: url( '/image/design/bottom.jpg' );
-	background-position: bottom;
-	background-repeat: no-repeat;
-}
-
-div.inner {
-	background-image: url( '/image/design/top.jpg' );
-	background-position: top;
-	background-repeat: no-repeat;
-	padding: 35px 40px 40px 40px;
-	min-height: 500px;
-	height: auto !important;
-	height: 500px;
+	padding: 10px 0px 30px 0px;
 }
 
 div.main_header {
-	padding-right: 12px;
 	text-align: right;
 }
 
 div.main_header a {
-	font-family: Helvetica, sans-serif;
+	color: #444444;
 	font-size: 20px;
 	font-weight: bold;
-	color: #e76f00;
 }
 
 h1, h2, h3 {
-	color: #e76f00;
+	color: #444444;
 	font-weight: bold;
-	margin: 0px 0px 10px 50px;
+	margin: 0px 0px 20px 50px;
 }
 h1 {
-	font-size: 18px;
+	font-size: 20px;
 }
 h2 {
-	font-size: 16px;
+	font-size: 18px;
 }
 h3 {
-	font-size: 14px;
+	font-size: 16px;
 }
 
 div.header {
 	text-align: left;
-	margin: 5px 0px 5px 0px;
+	margin: 10px 0px 10px 0px;
 }
 
 div.content {
@@ -69,7 +52,7 @@ div.content {
 
 div.footer {
 	text-align: right;
-	margin: 5px 0px 5px 0px;
+	margin: 10px 0px 10px 0px;
 }
 
 div.pages {
@@ -77,7 +60,7 @@ div.pages {
 }
 
 div.comment_content, div.comment_header {
-	color: #666666;
+	color: #888888;
 	margin-left: 30px;
 }
 
@@ -96,18 +79,19 @@ div.google-adsense {
 
 pre {
 	display: block;
-	font-size: 12px;
+	font-size: 14px;
 	font-family: monospace;
 	margin: 0px 0px 0px 30px;
 	color: #660000;
 }
 
 a {
-	color: #0066aa;
+	color: #1982d1;
+	text-decoration: none;
 }
 
 a:hover {
-	color: #e76f00;
+	text-decoration: underline;
 }
 
 span.title {
@@ -115,11 +99,11 @@ span.title {
 }
 
 	span.title a, span.title a:hover {
-		color: #333333;
+		color: #444444;
 	}
 
-div.main_header a, div.footer a, div.pages a, span.title a, a.tag {
-	text-decoration: none;
+div.footer a, a.tag {
+	font-size: 12px;
 }
 
 a img {
@@ -136,17 +120,17 @@ input, textarea {
 }
 
 input.text {
-	color: #333333;
+	color: #444444;
 	background-color: #f5f5f5;
 }
 
 input.button {
-	color: #333333;
+	color: #444444;
 	background-color: #e5e5e5;
 }
 
 textarea {
-	color: #333333;
+	color: #444444;
 	background-color: #f5f5f5;
 }
 
@@ -165,6 +149,7 @@ form.comment_form {
 	}
 	
 		form.comment_form table.comment_table td {
+			font-size: 12px;
 			text-align: left;
 		}
 	
@@ -211,7 +196,7 @@ form.search_form {
 
 form.search_form table.search_table {
 	width: 100%;
-	margin: 10px 0px 10px 0px;
+	margin: 15px 0px 15px 0px;
 	border-collapse: collapse;
 }
 
@@ -225,7 +210,7 @@ table.search_result {
 }
 
 		table.search_result td {
-			padding: 5px;
+			padding: 5px 5px;
 			vertical-align: top;
 		}
 
@@ -249,6 +234,11 @@ table.portfolio_table {
 		border: 1px solid #aaaaaa;
 	}
 
+	table.portfolio_table td a {
+		font-size: 90%;
+		text-decoration: none;
+	}
+
 div.tag_cloud {
 	text-align: center;
 	padding: 0px 100px;
@@ -257,15 +247,15 @@ div.tag_cloud {
 	div.tag_cloud a {
 		margin: 3px;
 		white-space: nowrap;
-		text-decoration: none;
 	}
 	
 	div.tag_cloud a.selected {
-		color: #e76f00;
+		color: #444444;
+		font-weight: bold;
 	}
 
 div.message {
-	color: red;
+	color: #ff0000;
 	text-align: center;
 	font-weight: bold;
 	margin-top: 10px;
@@ -279,7 +269,7 @@ div.separator {
 }
 
 div.group_path {
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 }
 
 div.group_tree a, div.group_path a, table.work_table a {
@@ -302,8 +292,8 @@ div.work h3 {
 }
 
 div.work p, div.work pre {
-	color: #333333;
-	font-size: 12px;
+	color: #444444;
+	font-size: 14px;
 	font-family: monospace;
 	margin-left: 0px;
 }

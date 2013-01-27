@@ -11,12 +11,8 @@
 	</head>
 	<body>
 		<div class="main">
-			<div class="outer">
-				<div class="inner">
-					<div class="main_header"><a href="/">He дождетесь!</a></div>
+			<div class="main_header"><a href="/">He дождетесь!</a></div>
 {$content}
-				</div>
-			</div>
 		</div>
 		<script type="text/javascript">
 			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
