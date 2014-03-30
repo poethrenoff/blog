@@ -365,6 +365,14 @@ class metadata
 			'title' => 'Файл-менеджер',
 			'class' => 'fm'
 		),
+		
+		/*
+		 *	Утилита "Поиск дубликатов"
+		 */
+		'similarity' => array(
+			'title' => 'Поиск дубликатов',
+			'class' => 'similarity'
+		),
 	);
 }
 

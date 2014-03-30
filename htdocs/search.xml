@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>Не дождетесь!</ShortName>
+	<Description>Поиск по блогу о здоровье и его отсутствии</Description>
+	<Image width="16" height="16" type="image/x-icon">http://blog.testea.ru/image/favicon.ico</Image>
+	<Url type="text/html" method="get" template="http://blog.testea.ru/search?text={searchTerms}"/>
+	<InputEncoding>UTF-8</InputEncoding>
+	<OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>
