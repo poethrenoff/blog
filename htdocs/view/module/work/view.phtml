@@ -1,0 +1,12 @@
+<?php if ($this->group_path) { ?>
+<div class="group_path">
+<?php $group_path_index = 0; $group_path_count = count($this->group_path); ?>
+<?php foreach ($this->group_path as $path_item) { ?>
+	<a href="<?= $path_item['path_url'] ?>"><?= $this->escape($path_item['path_title']) ?></a><?php if (++$group_path_index != $group_path_count) { ?> :: <?php } ?>
+<?php } ?>
+</div>
+<?php } ?>
+<div class="work">
+<h3><?= trim($this->escape($this->work_title)) ?></h3>
+<p><?= rtrim(nl2br($this->work_text)) ?><?php if ($this->work_comment) { ?><br/><br/><?= trim($this->work_comment) ?><?php } ?></p>
+</div>

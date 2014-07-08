@@ -1,0 +1,111 @@
+<script type="text/javascript" src="/js/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">
+	editor_config = {
+		theme: 'advanced', skin: 'o2k7', skin_variant: 'silver', language: 'ru',
+		content_css: '/style/tiny_mce.css',
+		plugins : 'safari,emotions,preview,searchreplace,fullscreen,xhtmlxtras',
+		
+		theme_advanced_buttons1 : 'bold,italic,underline,strikethrough,|,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontselect,fontsizeselect',
+		theme_advanced_buttons2 : 'forecolor,backcolor,|,bullist,numlist,|,outdent,indent,|,link,unlink,image,|,charmap,emotions,|,undo,redo,|,cut,copy,paste,|,search,replace,|,removeformat,fullscreen,preview,code',
+		theme_advanced_buttons3 : '', theme_advanced_buttons4 : '',
+		theme_advanced_toolbar_location : 'top', theme_advanced_toolbar_align : 'left',
+		theme_advanced_statusbar_location : 'bottom', theme_advanced_resizing : true
+	};
+	
+	function showCommentForm( sCommentId )
+	{
+		if ( ed_old = tinyMCE.get('comment_content') ) {
+			ed_old.hide(); ed_old.destroy(); tinyMCE.remove( ed_old );
+		}
+		
+		var oCommentForm = document.forms['comment_form'];
+		oCommentForm.comment_parent.value = sCommentId;
+		
+		var oCommentDiv = document.getElementById( 'comment_' + sCommentId );
+		oCommentDiv.appendChild( oCommentForm );
+		
+		oCommentForm.style.display = 'block';
+		
+		tinyMCE.add( ed = new tinymce.Editor('comment_content', editor_config ) ); ed.render();
+	}
+</script>
+
+<div class="header">
+	<span class="title"><?= $this->news_date ?><?php if (!$this->news_publish) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($this->tag_list as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item['tag_url'] ?>" class="tag"><?= $tag_item['tag_title'] ?></a><?php } ?> 
+</div>
+<div class="content">
+	<?= $this->news_content ?> 
+</div>
+<?php if ($this->error) { ?>
+<div class="message">
+	<?= $this->escape($this->error) ?> 
+</div>
+<?php } ?>
+<div id="comment_0" class="footer">
+	<a href="" onclick="showCommentForm( '0' ); return false">Оставить комментарий</a>
+</div>
+
+<form id="comment_form" class="comment_form" action="<?= $this->form_url ?>" method="post">
+	<table class="comment_table">
+		<col class="col1"/><col class="col2"/><col class="col3"/>
+		<tr>
+			<td class="title">
+				Имя:
+			</td>
+			<td colspan="2">
+				<input type="hidden" name="mode" value="reply"/>
+				<input type="hidden" name="action" value="comment"/>
+				<input type="hidden" name="comment_parent" value=""/>
+                <input type="text" class="text name" name="comment_author" value="<?= $this->escape($this->comment_author) ?>"/>
+			</td>
+		</tr>
+		<tr>
+			<td class="title">
+				Комментарий:
+			</td>
+			<td colspan="2">
+				<textarea id="comment_content" name="comment_content" rows="5" cols="5"><?= $this->escape($this->comment_content) ?></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="title">
+				Число:
+			</td>
+			<td>
+				<input type="text" class="text code" name="captcha_value" value="" autocomplete="off"/>
+			</td>
+			<td>
+				<img src="/image/captcha.php" class="code" alt="Контрольное число"/>
+			</td>
+		</tr>
+		<tr>
+			<td/>
+			<td colspan="2">
+				<input type="submit" class="button send" value="Отправить"/>
+			</td>
+		</tr>
+	</table>
+</form>
+<?php foreach ($this->comment_tree as $comment_item) { ?>
+<?php if ($comment_item['_depth']) { ?>
+<?php for ($offset = 0; $offset < $comment_item['_depth']; $offset++) { ?><div class="tree_offset"><?php } ?> 
+<?php } ?>
+<div class="comment_header">
+    <?= $this->escape($comment_item['comment_author']) ?> (<?= $this->escape($comment_item['comment_date']) ?>)
+</div>
+<div class="comment_content">
+	<?= $comment_item['comment_content'] ?> 
+</div>
+<?php if ($comment_item['_depth']) { ?>
+<?php for ($offset = 0; $offset < $comment_item['_depth']; $offset++) { ?></div><?php } ?> 
+<?php } ?>
+<div id="comment_<?= $comment_item['comment_id'] ?>" class="footer">
+	<a href="" onclick="showCommentForm( '<?= $comment_item['comment_id'] ?>' ); return false">Оставить комментарий</a>
+</div>
+<?php } ?>
+<?php if ($this->show_form !== null) { ?>
+<script type="text/javascript">
+	showCommentForm( '<?= $this->show_form ?>' );
+</script>
+<?php } ?>
+

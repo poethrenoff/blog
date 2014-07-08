@@ -1,0 +1,24 @@
+<h3>Портфолио</h3>
+
+<table class="portfolio_table">
+<?php foreach ($this->portfolio_table as $row) { ?>
+    <tr>
+<?php foreach ($row as $item) { ?>
+		<td style="width: <?= $this->table_cell_width ?>%">
+<?php if ($item) { ?>
+            <a href="<?= $item['portfolio_url'] ?>" title="<?= $this->escape($item['portfolio_title']) ?>"><img src="<?= $item['portfolio_picture'] ?>" alt="<?= $this->escape($item['portfolio_title']) ?>"/></a><br/>
+			<a href="<?= $item['portfolio_url'] ?>"><?= $this->escape($item['portfolio_title']) ?></a>
+<?php } else { ?>
+			&nbsp;
+<?php } ?>
+		</td>
+<?php } ?>
+	</tr>
+<?php } ?>
+</table>
+<?php if ($this->pages) { ?>
+<div class="pages">
+	Страницы: <?= $this->pages ?>
+</div>
+<?php } ?>
+

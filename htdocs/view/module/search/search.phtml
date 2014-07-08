@@ -1,0 +1,39 @@
+<form class="search_form" action="<?= $this->form_url ?>" method="get">
+	<table class="search_table">
+		<tr>
+			<td>
+				<input type="text" class="text" name="text" value="<?= $this->escape($this->search_text) ?>" errors="require"/>
+				<input type="submit" class="button" value="Найти"/>
+			</td>
+		</tr>
+	</table>
+</form>
+<div class="tag_cloud">
+<?php foreach ($this->tag_list as $tag_item) { ?>
+	<a href="<?= $tag_item['tag_url'] ?>" style="font-size: <?= $tag_item['font_size'] ?>px" title="<?= $this->escape($tag_item['tag_title']) ?> (<?= $tag_item['tag_count'] ?>)"<?php if ($tag_item['tag_selected']) { ?> class="selected"<?php } ?>><?= $this->escape($tag_item['tag_title']) ?></a>
+<?php } ?>
+</div>
+<?php if ($this->search_list) { ?>
+<?php foreach ($this->search_list as $search_item) { ?>
+<table class="search_result">
+	<tr>
+		<td class="index">
+			<?= $search_item['search_index'] ?>.
+		</td>
+		<td>
+			<span class="title"><a href="<?= $search_item['news_url'] ?>"><?= $search_item['news_date'] ?></a></span><p><?= $search_item['news_content'] ?></p>
+		</td>
+	</tr>
+</table>
+<?php } ?>
+<?php if (!$this->search_list) { ?>
+<div class="message">
+	Ничего не найдено
+</div>
+<?php } ?>
+<?php } ?>
+<?php if ($this->pages) { ?>
+<div class="pages">
+	Страницы: <?= $this->pages ?>
+</div>
+<?php } ?>

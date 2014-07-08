@@ -48,7 +48,7 @@
  * @author    Aleksander Machniak <alec@php.net>
  * @copyright 2003-2006 PEAR <pear-group@php.net>
  * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   CVS: $Id: mime.php 293082 2010-01-04 14:37:52Z alec $
+ * @version   CVS: $Id: mime.php 297878 2010-04-12 10:57:34Z alec $
  * @link      http://pear.php.net/package/Mail_mime
  *
  *            This class is based on HTML Mime Mail class from
@@ -109,22 +109,6 @@ class Mail_mime
      * @access private
      */
     var $_htmlbody;
-
-    /**
-     * contains the mime encoded text
-     *
-     * @var string
-     * @access private
-     */
-    var $_mime;
-
-    /**
-     * contains the multipart content
-     *
-     * @var string
-     * @access private
-     */
-    var $_multipart;
 
     /**
      * list of the attached images
@@ -206,104 +190,32 @@ class Mail_mime
     }
 
     /**
-     * Set encoding to use for the headers
+     * Set build parameter value
      *
-     * @param string $head_encoding Encoding to use for the headers.
-     *                              Options: quoted-printable or base64
+     * @param string $name  Parameter name
+     * @param string $value Parameter value
      *
      * @return void
      * @access public
      * @since 1.6.0
      */
-    function setHeadEncoding($head_encoding)
+    function setParam($name, $value)
     {
-        $this->_build_params['head_encoding'] = $head_encoding;
+        $this->_build_params[$name] = $value;
     }
 
     /**
-     * Set encoding to use for plain text message part
+     * Get build parameter value
      *
-     * @param string $text_encoding Encoding to use for plain text.
-     *                              Options: 7bit, 8bit, base64, quoted-printable
+     * @param string $name Parameter name
      *
-     * @return void
+     * @return mixed Parameter value
      * @access public
      * @since 1.6.0
      */
-    function setTextEncoding($text_encoding)
+    function getParam($name)
     {
-        $this->_build_params['text_encoding'] = $text_encoding;
-    }
-
-    /**
-     * Set encoding to use for html message part
-     *
-     * @param string $html_encoding Encoding to use for html
-     *                              Options: 7bit, 8bit, base64, quoted-printable
-     *
-     * @return void
-     * @access public
-     * @since 1.6.0
-     */
-    function setHtmlEncoding($html_encoding)
-    {
-        $this->_build_params['html_encoding'] = $html_encoding;
-    }
-
-    /**
-     * Set the character set to use for html message part
-     *
-     * @param string $html_charset The character set to use for html
-     *
-     * @return void
-     * @access public
-     * @since 1.6.0
-     */
-    function setHtmlCharset($html_charset)
-    {
-        $this->_build_params['html_charset'] = $html_charset;
-    }
-
-    /**
-     * Set the character set to use for plain text message part
-     *
-     * @param string $text_charset The character set to use for text
-     *
-     * @return void
-     * @access public
-     * @since 1.6.0
-     */
-    function setTextCharset($text_charset)
-    {
-        $this->_build_params['text_charset'] = $text_charset;
-    }
-
-    /**
-     * Set the character set to use for headers
-     *
-     * @param string $head_charset The character set to use for headers
-     *
-     * @return void
-     * @access public
-     * @since 1.6.0
-     */
-    function setHeadCharset($head_charset)
-    {
-        $this->_build_params['head_charset'] = $head_charset;
-    }
-
-    /**
-     * Set the object's end-of-line sequence
-     *
-     * @param string $eol End Of Line sequence
-     *
-     * @return void
-     * @access public
-     * @since 1.6.0
-     */
-    function setEOL($eol)
-    {
-        $this->_build_params['eol'] = $eol;
+        return isset($this->_build_params[$name]) ? $this->_build_params[$name] : null;
     }
 
     /**
@@ -346,6 +258,18 @@ class Mail_mime
     }
 
     /**
+     * Get message text body
+     *
+     * @return string Text body
+     * @access public
+     * @since 1.6.0
+     */
+    function getTXTBody()
+    {
+        return $this->_txtbody;
+    }
+
+    /**
      * Adds a html part to the mail.
      *
      * @param string $data   Either a string or the file name with the
@@ -372,20 +296,37 @@ class Mail_mime
     }
 
     /**
+     * Get message HTML body
+     *
+     * @return string HTML body
+     * @access public
+     * @since 1.6.0
+     */
+    function getHTMLBody()
+    {
+        return $this->_htmlbody;
+    }
+
+    /**
      * Adds an image to the list of embedded images.
      *
-     * @param string $file   The image file name OR image data itself
-     * @param string $c_type The content type
-     * @param string $name   The filename of the image.
-     *                       Only used if $file is the image data.
-     * @param bool   $isfile Whether $file is a filename or not.
-     *                       Defaults to true
+     * @param string $file       The image file name OR image data itself
+     * @param string $c_type     The content type
+     * @param string $name       The filename of the image.
+     *                           Only used if $file is the image data.
+     * @param bool   $isfile     Whether $file is a filename or not.
+     *                           Defaults to true
+     * @param string $content_id Desired Content-ID of MIME part
+     *                           Defaults to generated unique ID
      *
      * @return bool          True on success
      * @access public
      */
-    function addHTMLImage($file, $c_type='application/octet-stream',
-        $name = '', $isfile = true
+    function addHTMLImage($file,
+        $c_type='application/octet-stream',
+        $name = '',
+        $isfile = true,
+        $content_id = null
     ) {
         $bodyfile = null;
 
@@ -405,12 +346,16 @@ class Mail_mime
             $filename = $name;
         }
 
+        if (!$content_id) {
+            $content_id = md5(uniqid(time()));
+        }
+
         $this->_html_images[] = array(
             'body'      => $filedata,
             'body_file' => $bodyfile,
             'name'      => $filename,
             'c_type'    => $c_type,
-            'cid'       => md5(uniqid(time()))
+            'cid'       => $content_id
         );
 
         return true;
@@ -443,6 +388,7 @@ class Mail_mime
      *                            or base64) instead
      * @param string $f_encoding  Encoding for attachment filename (Content-Disposition)
      *                            See $n_encoding description
+     * @param string $description Content-Description header
      *
      * @return mixed              True on success or PEAR_Error object
      * @access public
@@ -457,7 +403,8 @@ class Mail_mime
         $language    = '',
         $location    = '',
         $n_encoding  = null,
-        $f_encoding  = null
+        $f_encoding  = null,
+        $description = ''
     ) {
         $bodyfile = null;
 
@@ -495,6 +442,7 @@ class Mail_mime
             'language'    => $language,
             'location'    => $location,
             'disposition' => $disposition,
+            'description' => $description,
             'name_encoding'     => $n_encoding,
             'filename_encoding' => $f_encoding
         );
@@ -723,6 +671,9 @@ class Mail_mime
         if (!empty($value['filename_encoding'])) {
             $params['filename_encoding'] = $value['filename_encoding'];
         }
+        if (!empty($value['description'])) {
+            $params['description'] = $value['description'];
+        }
 
         $ret = $obj->addSubpart($value['body'], $params);
         return $ret;
@@ -765,6 +716,22 @@ class Mail_mime
     }
 
     /**
+     * Returns the complete e-mail body, ready to send using an alternative
+     * mail delivery method.
+     * 
+     * @param array $params The Build parameters passed to the
+     *                      &get() function. See &get for more info.
+     *
+     * @return mixed The e-mail body or PEAR error object
+     * @access public
+     * @since 1.6.0
+     */
+    function getMessageBody($params = null)
+    {
+        return $this->get($params, null, true);
+    }
+
+    /**
      * Writes (appends) the complete e-mail into file.
      * 
      * @param string $filename  Output file location
@@ -777,6 +744,7 @@ class Mail_mime
      *
      * @return mixed True or PEAR error object
      * @access public
+     * @since 1.6.0
      */
     function saveMessage($filename, $params = null, $headers = null, $overwrite = false)
     {
@@ -816,18 +784,55 @@ class Mail_mime
     }
 
     /**
+     * Writes (appends) the complete e-mail body into file.
+     * 
+     * @param string $filename Output file location
+     * @param array  $params   The Build parameters passed to the
+     *                         &get() function. See &get for more info.
+     *
+     * @return mixed True or PEAR error object
+     * @access public
+     * @since 1.6.0
+     */
+    function saveMessageBody($filename, $params = null)
+    {
+        // Check state of file and raise an error properly
+        if (file_exists($filename) && !is_writable($filename)) {
+            $err = PEAR::raiseError('File is not writable: ' . $filename);
+            return $err;
+        }
+
+        // Temporarily reset magic_quotes_runtime and read file contents
+        if ($magic_quote_setting = get_magic_quotes_runtime()) {
+            @ini_set('magic_quotes_runtime', 0);
+        }
+
+        if (!($fh = fopen($filename, 'ab'))) {
+            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            return $err;
+        }
+
+        // Write the rest of the message into file
+        $res = $this->get($params, $filename, true);
+
+        return $res ? $res : true;
+    }
+
+    /**
      * Builds the multipart message from the list ($this->_parts) and
      * returns the mime content.
      *
-     * @param array    $params   Build parameters that change the way the email
-     *                           is built. Should be associative. See $_build_params.
-     * @param resource $filename Output file where to save the message instead of
-     *                           returning it
+     * @param array    $params    Build parameters that change the way the email
+     *                            is built. Should be associative. See $_build_params.
+     * @param resource $filename  Output file where to save the message instead of
+     *                            returning it
+     * @param boolean  $skip_head True if you want to return/save only the message
+     *                            without headers
      *
      * @return mixed The MIME message content string, null or PEAR error object
      * @access public
      */
-    function &get($params = null, $filename = null)
+    function &get($params = null, $filename = null, $skip_head = false)
     {
         if (isset($params)) {
             while (list($key, $value) = each($params)) {
@@ -866,11 +871,13 @@ class Mail_mime
             }
         }
 
+        $this->_checkParams();
+
         $null        = null;
         $attachments = count($this->_parts)                 ? true : false;
         $html_images = count($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
-        $text        = (!$html && strlen($this->_txtbody)) ? true : false;
+        $text        = (!$html && strlen($this->_txtbody))  ? true : false;
 
         switch (true) {
         case $text && !$attachments:
@@ -997,14 +1004,16 @@ class Mail_mime
         // Write output to file
         if ($filename) {
             // Append mimePart message headers and body into file
-            if (PEAR::isError($headers = $message->encodeToFile($filename, $boundary))) {
+            $headers = $message->encodeToFile($filename, $boundary, $skip_head);
+            if (PEAR::isError($headers)) {
                 return $headers;
             }
             $this->_headers = array_merge($this->_headers, $headers);
             $ret = null;
             return $ret;
         } else {
-            if (PEAR::isError($output = $message->encode($boundary))) {
+            $output = $message->encode($boundary, $skip_head);
+            if (PEAR::isError($output)) {
                 return $output;
             }
             $this->_headers = array_merge($this->_headers, $output['headers']);
@@ -1019,8 +1028,9 @@ class Mail_mime
      * $array['header-name'] = 'header-value';
      *
      * @param array $xtra_headers Assoc array with any extra headers (optional)
+     *                            (Don't set Content-Type for multipart messages here!)
      * @param bool  $overwrite    Overwrite already existing headers.
-     * @param bool  $skip_content Don't return content headers: Content-Type
+     * @param bool  $skip_content Don't return content headers: Content-Type,
      *                            Content-Disposition and Content-Transfer-Encoding
      * 
      * @return array              Assoc array with the mime headers
@@ -1055,6 +1065,8 @@ class Mail_mime
             unset($headers['Content-Type']);
             unset($headers['Content-Transfer-Encoding']);
             unset($headers['Content-Disposition']);
+        } else if (!empty($this->_build_params['ctype'])) {
+            $headers['Content-Type'] = $this->_build_params['ctype'];
         }
 
         $encodedHeaders = $this->_encodeHeaders($headers);
@@ -1066,9 +1078,10 @@ class Mail_mime
      * (usefull if you want to use the PHP mail() function)
      *
      * @param array $xtra_headers Assoc array with any extra headers (optional)
-     * @param bool  $overwrite    Overwrite the existing heaers with new.
-     * @param bool  $skip_content Don't return content headers: Content-Type
-     *                            and Content-Transfer-Encoding
+     *                            (Don't set Content-Type for multipart messages here!)
+     * @param bool  $overwrite    Overwrite the existing headers with new.
+     * @param bool  $skip_content Don't return content headers: Content-Type,
+     *                            Content-Disposition and Content-Transfer-Encoding
      *
      * @return string             Plain text headers
      * @access public
@@ -1076,6 +1089,14 @@ class Mail_mime
     function txtHeaders($xtra_headers = null, $overwrite = false, $skip_content = false)
     {
         $headers = $this->headers($xtra_headers, $overwrite, $skip_content);
+
+        // Place Received: headers at the beginning of the message
+        // Spam detectors often flag messages with it after the Subject: as spam
+        if (isset($headers['Received'])) {
+            $received = $headers['Received'];
+            unset($headers['Received']);
+            $headers = array('Received' => $received) + $headers;
+        }
 
         $ret = '';
         $eol = $this->_build_params['eol'];
@@ -1091,6 +1112,54 @@ class Mail_mime
         }
 
         return $ret;
+    }
+
+    /**
+     * Sets message Content-Type header.
+     * Use it to build messages with various content-types e.g. miltipart/raport
+     * not supported by _contentHeaders() function.
+     *
+     * @param string $type   Type name
+     * @param array  $params Hash array of header parameters
+     *
+     * @return void
+     * @access public
+     * @since 1.7.0
+     */
+    function setContentType($type, $params = array())
+    {
+        $header = $type;
+
+        $eol = !empty($this->_build_params['eol'])
+            ? $this->_build_params['eol'] : "\r\n";
+
+        // add parameters
+        $token_regexp = '#([^\x21,\x23-\x27,\x2A,\x2B,\x2D'
+            . ',\x2E,\x30-\x39,\x41-\x5A,\x5E-\x7E])#';
+        if (is_array($params)) {
+            foreach ($params as $name => $value) {
+                if ($name == 'boundary') {
+                    $this->_build_params['boundary'] = $value;
+                }
+                if (!preg_match($token_regexp, $value)) {
+                    $header .= ";$eol $name=$value";
+                } else {
+                    $value = addcslashes($value, '\\"');
+                    $header .= ";$eol $name=\"$value\"";
+                }
+            }
+        }
+
+        // add required boundary parameter if not defined
+        if (preg_match('/^multipart\//i', $type)) {
+            if (empty($this->_build_params['boundary'])) {
+                $this->_build_params['boundary'] = '=_' . md5(rand() . microtime());              
+            }
+
+            $header .= ";$eol boundary=\"".$this->_build_params['boundary']."\"";
+        }
+
+        $this->_build_params['ctype'] = $header;
     }
 
     /**
@@ -1224,258 +1293,9 @@ class Mail_mime
      */
     function encodeHeader($name, $value, $charset, $encoding)
     {
-        // Structured headers
-        $comma_headers = array(
-            'from', 'to', 'cc', 'bcc', 'sender', 'reply-to',
-            'resent-from', 'resent-to', 'resent-cc', 'resent-bcc',
-            'resent-sender', 'resent-reply-to',
+        return Mail_mimePart::encodeHeader(
+            $name, $value, $charset, $encoding, $this->_build_params['eol']
         );
-        $other_headers = array(
-            'references', 'in-reply-to', 'message-id', 'resent-message-id',
-        );
-
-        $name = strtolower($name);
-        $eol = $this->_build_params['eol'];
-
-        if (in_array($name, $comma_headers)) {
-            $separator = ',';
-        } else if (in_array($name, $other_headers)) {
-            $separator = ' ';
-        }
-
-        if (!$charset) {
-            $charset = 'ISO-8859-1';
-        }
-
-        // Structured header (make sure addr-spec inside is not encoded)
-        if (!empty($separator)) {
-            $parts = $this->_explodeQuotedString($separator, $value);
-            $value = '';
-
-            foreach ($parts as $part) {
-                $part = trim($part);
-                if (!$part) {
-                    continue;
-                }
-                if ($value) {
-                    $value .= $separator==',' ? $separator.' ' : ' ';
-                } else {
-                    $value = $name . ': ';
-                }
-
-                // let's find phrase (name) and/or addr-spec
-                if (preg_match('/^<\S+@\S+>$/', $part)) {
-                    $value .= $part;
-                } else if (preg_match('/^\S+@\S+$/', $part)) {
-                    // address without brackets and without name
-                    $value .= $part;
-                } else if (preg_match('/<*\S+@\S+>*$/', $part, $matches)) {
-                    // address with name (handle name)
-                    $address = $matches[0];
-                    $word = str_replace($address, '', $part);
-                    $word = trim($word);
-                    // check if phrase requires quoting
-                    if ($word) {
-                        // non-ASCII: require encoding
-                        if (preg_match('#([\x80-\xFF]){1}#', $word)) {
-                            if ($word[0] == '"' && $word[strlen($word)-1] == '"') {
-                                // de-quote quoted-string, encoding changes
-                                // string to atom
-                                $search = array("\\\"", "\\\\");
-                                $replace = array("\"", "\\");
-                                $word = str_replace($search, $replace, $word);
-                                $word = substr($word, 1, -1);
-                            }
-                            // find length of last line
-                            if (($pos = strrpos($value, $eol)) !== false) {
-                                $last_len = strlen($value) - $pos;
-                            } else {
-                                $last_len = strlen($value);
-                            }
-                            $word = $this->_encodeString(
-                                $word, $charset, $encoding, $last_len
-                            );
-                        } else if (($word[0] != '"' || $word[strlen($word)-1] != '"')
-                            && preg_match('/[\(\)\<\>\\\.\[\]@,;:"]/', $word)
-                        ) {
-                            // ASCII: quote string if needed
-                            $word = '"'.addcslashes($word, '\\"').'"';
-                        }
-                    }
-                    $value .= $word.' '.$address;
-                } else {
-                    // addr-spec not found, don't encode (?)
-                    $value .= $part;
-                }
-
-                // RFC2822 recommends 78 characters limit, use 76 from RFC2047
-                $value = wordwrap($value, 76, $eol . ' ');
-            }
-
-            $value = preg_replace('/^'.$name.': /', '', $value);
-
-        } else {
-            // Unstructured header
-            // non-ASCII: require encoding
-            if (preg_match('#([\x80-\xFF]){1}#', $value)) {
-                if ($value[0] == '"' && $value[strlen($value)-1] == '"') {
-                    // de-quote quoted-string, encoding changes
-                    // string to atom
-                    $search = array("\\\"", "\\\\");
-                    $replace = array("\"", "\\");
-                    $value = str_replace($search, $replace, $value);
-                    $value = substr($value, 1, -1);
-                }
-                $value = $this->_encodeString(
-                    $value, $charset, $encoding, strlen($name) + 2
-                );
-            } else if (strlen($name.': '.$value) > 78) {
-                // ASCII: check if header line isn't too long and use folding
-                $tmp = wordwrap($name.': '.$value, 78, $eol . ' ');
-                $value = preg_replace('/^'.$name.':\s*/', '', $tmp);
-                // hard limit 998 (RFC2822)
-                $value = wordwrap($value, 998, $eol . ' ', true);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Encodes a header value as per RFC2047
-     *
-     * @param string $value      The header data to encode
-     * @param string $charset    Character set name
-     * @param string $encoding   Encoding name (base64 or quoted-printable)
-     * @param int    $prefix_len Prefix length
-     *
-     * @return string            Encoded header data
-     * @access private
-     */
-    function _encodeString($value, $charset, $encoding, $prefix_len=0)
-    {
-        if ($encoding == 'base64') {
-            // Base64 encode the entire string
-            $value = base64_encode($value);
-
-            // Generate the header using the specified params and dynamicly 
-            // determine the maximum length of such strings.
-            // 75 is the value specified in the RFC.
-            $prefix = '=?' . $charset . '?B?';
-            $suffix = '?=';
-            $maxLength = 75 - strlen($prefix . $suffix) - 2;
-            $maxLength1stLine = $maxLength - $prefix_len;
-
-            // We can cut base4 every 4 characters, so the real max
-            // we can get must be rounded down.
-            $maxLength = $maxLength - ($maxLength % 4);
-            $maxLength1stLine = $maxLength1stLine - ($maxLength1stLine % 4);
-
-            $cutpoint = $maxLength1stLine;
-            $value_out = $value;
-            $output = '';
-            while ($value_out) {
-                // Split translated string at every $maxLength
-                $part = substr($value_out, 0, $cutpoint);
-                $value_out = substr($value_out, $cutpoint);
-                $cutpoint = $maxLength;
-                // RFC 2047 specifies that any split header should
-                // be seperated by a CRLF SPACE. 
-                if ($output) {
-                    $output .= $this->_build_params['eol'] . ' ';
-                }
-                $output .= $prefix . $part . $suffix;
-            }
-            $value = $output;
-        } else {
-            // quoted-printable encoding has been selected
-            $value = Mail_mimePart::encodeQP($value);
-
-            // Generate the header using the specified params and dynamicly 
-            // determine the maximum length of such strings.
-            // 75 is the value specified in the RFC.
-            $prefix = '=?' . $charset . '?Q?';
-            $suffix = '?=';
-            $maxLength = 75 - strlen($prefix . $suffix) - 3;
-            $maxLength1stLine = $maxLength - $prefix_len;
-            $maxLength = $maxLength - 1;
-
-            // This regexp will break QP-encoded text at every $maxLength
-            // but will not break any encoded letters.
-            $reg1st = "|(.{0,$maxLength1stLine}[^\=][^\=])|";
-            $reg2nd = "|(.{0,$maxLength}[^\=][^\=])|";
-
-            $value_out = $value;
-            $realMax = $maxLength1stLine + strlen($prefix . $suffix);
-            if (strlen($value_out) >= $realMax) {
-                // Begin with the regexp for the first line.
-                $reg = $reg1st;
-                $output = '';
-                while ($value_out) {
-                    // Split translated string at every $maxLength
-                    // But make sure not to break any translated chars.
-                    $found = preg_match($reg, $value_out, $matches);
-
-                    // After this first line, we need to use a different
-                    // regexp for the first line.
-                    $reg = $reg2nd;
-
-                    // Save the found part and encapsulate it in the
-                    // prefix & suffix. Then remove the part from the
-                    // $value_out variable.
-                    if ($found) {
-                        $part = $matches[0];
-                        $len = strlen($matches[0]);
-                        $value_out = substr($value_out, $len);
-                    } else {
-                        $part = $value_out;
-                        $value_out = "";
-                    }
-
-                    // RFC 2047 specifies that any split header should 
-                    // be seperated by a CRLF SPACE
-                    if ($output) {
-                        $output .= $this->_build_params['eol'] . ' ';
-                    }
-                    $output .= $prefix . $part . $suffix;
-                }
-                $value_out = $output;
-            } else {
-                $value_out = $prefix . $value_out . $suffix;
-            }
-            $value = $value_out;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Explode quoted string
-     *
-     * @param string $delimiter Delimiter expression string for preg_match()
-     * @param string $string    Input string
-     *
-     * @return array            String tokens array
-     * @access private
-     */
-    function _explodeQuotedString($delimiter, $string)
-    {
-        $result = array();
-        $strlen = strlen($string);
-
-        for ($q=$p=$i=0; $i < $strlen; $i++) {
-            if ($string[$i] == "\""
-                && (empty($string[$i-1]) || $string[$i-1] != "\\")
-            ) {
-                $q = $q ? false : true;
-            } else if (!$q && preg_match("/$delimiter/", $string[$i])) {
-                $result[] = substr($string, $p, $i - $p);
-                $p = $i + 1;
-            }
-        }
-
-        $result[] = substr($string, $p);
-        return $result;
     }
 
     /**
@@ -1540,6 +1360,8 @@ class Mail_mime
             return $headers;
         }
 
+        $this->_checkParams();
+
         $eol = !empty($this->_build_params['eol'])
             ? $this->_build_params['eol'] : "\r\n";
 
@@ -1572,6 +1394,44 @@ class Mail_mime
         }
 
         return $headers;
+    }
+
+    /**
+     * Validate and set build parameters
+     *
+     * @return void
+     * @access private
+     */
+    function _checkParams()
+    {
+        $encodings = array('7bit', '8bit', 'base64', 'quoted-printable');
+
+        $this->_build_params['text_encoding']
+            = strtolower($this->_build_params['text_encoding']);
+        $this->_build_params['html_encoding']
+            = strtolower($this->_build_params['html_encoding']);
+
+        if (!in_array($this->_build_params['text_encoding'], $encodings)) {
+            $this->_build_params['text_encoding'] = '7bit';
+        }
+        if (!in_array($this->_build_params['html_encoding'], $encodings)) {
+            $this->_build_params['html_encoding'] = '7bit';
+        }
+
+        // text body
+        if ($this->_build_params['text_encoding'] == '7bit'
+            && !preg_match('/ascii/i', $this->_build_params['text_charset'])
+            && preg_match('/[^\x00-\x7F]/', $this->_txtbody)
+        ) {
+            $this->_build_params['text_encoding'] = 'quoted-printable';
+        }
+        // html body
+        if ($this->_build_params['html_encoding'] == '7bit'
+            && !preg_match('/ascii/i', $this->_build_params['html_charset'])
+            && preg_match('/[^\x00-\x7F]/', $this->_htmlbody)
+        ) {
+            $this->_build_params['html_encoding'] = 'quoted-printable';
+        }
     }
 
 } // End of class

@@ -1,0 +1,16 @@
+<?php foreach ($this->news_list as $news_item) { ?>
+<div class="header">
+<span class="title"><a href="<?= $news_item['news_url'] ?>"><?= $news_item['news_date'] ?></a><?php if (!$news_item['news_publish']) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($news_item['tag_list'] as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item['tag_url'] ?>" class="tag"><?= $tag_item['tag_title'] ?></a><?php } ?> 
+</div>
+<div class="content">
+	<?= $news_item['news_content'] ?>  
+</div>
+<div class="footer">
+    <?php if ($news_item['_comment_count']) { ?><a href="<?= $news_item['news_url'] ?>">Комментариев: <?= $news_item['_comment_count'] ?></a>&nbsp;|&nbsp;<?php } ?><a href="<?= $news_item['comment_url'] ?>">Оставить комментарий</a>
+</div>
+<?php } ?>
+<?php if ($this->pages) { ?>
+<div class="pages">
+	Страницы: <?= $this->pages ?> 
+</div>
+<?php } ?>
