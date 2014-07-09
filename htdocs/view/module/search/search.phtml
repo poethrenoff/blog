@@ -1,4 +1,4 @@
-<form class="search_form" action="<?= $this->form_url ?>" method="get">
+<form class="search_form" action="<?= Adminko\System::selfUrl() ?>" method="get">
 	<table class="search_table">
 		<tr>
 			<td>
@@ -18,10 +18,10 @@
 <table class="search_result">
 	<tr>
 		<td class="index">
-			<?= $search_item['search_index'] ?>.
+			<?= $this->search_index++ ?>.
 		</td>
 		<td>
-			<span class="title"><a href="<?= $search_item['news_url'] ?>"><?= $search_item['news_date'] ?></a></span><p><?= $search_item['news_content'] ?></p>
+			<span class="title"><a href="<?= $search_item->getNewsUrl() ?>"><?= $search_item->getNewsDate() ?></a></span><p><?= $search_item->getNewsContent() ?></p>
 		</td>
 	</tr>
 </table>

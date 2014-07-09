@@ -208,7 +208,7 @@ class NewsModule extends Module
     {
         setcookie('view', 'all', time() + 356 * 60 * 60 * 24, '/');
 
-        header('Location: /');
+        header('Location: ' . System::selfUrl());
 
         exit;
     }

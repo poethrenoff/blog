@@ -118,7 +118,7 @@ class Model
     public function getBatch(&$records = array()) {
         $objects = array();
         foreach ($records as $record) {
-            $objects[$record[$this->primary_field]] = model::factory($this->object)->get($record[$this->primary_field], $record);
+            $objects[$record[$this->primary_field]] = Model::factory($this->object)->get($record[$this->primary_field], $record);
         }
         return $objects;
     }
@@ -200,7 +200,7 @@ class Model
 
     // Удаление объекта из БД
     public function delete() {
-        if($this->is_new){
+        if ($this->is_new) {
             throw new \AlarmException("Ошибка. Запись не можеть быть удалена из БД, так как не имеет идентификатора.");
         }
         Db::delete($this->object, array($this->primary_field => $this->getId()));
@@ -209,7 +209,7 @@ class Model
 
     // Получение идентификатора объекта
     public function getId() {
-        if($this->is_new){
+        if ($this->is_new) {
             throw new \AlarmException("Ошибка. Запись не была сохранена в БД, поэтому не имеет идентификатора.");
         }
         return $this->fields[$this->primary_field]->get();

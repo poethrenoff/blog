@@ -4,10 +4,22 @@ namespace Adminko\Module;
 use Adminko\System;
 use Adminko\Paginator;
 use Adminko\Db\Db;
+use Adminko\Model\Model;
 use Adminko\Date;
 
 class SearchModule extends Module
 {
+    // Разрешен просмотр только опубликованных новостей
+    protected $only_publish = false;
+
+    // Инициализация модуля
+    public function init($action = 'index', $params = array(), $is_main = false)
+    {
+        $this->only_publish = init_cookie('view') != 'all';
+
+        parent::init($action, $params, $is_main);
+    }
+
     /**
      * Заполнение контента модуля
      */
@@ -17,74 +29,37 @@ class SearchModule extends Module
 
         $search_tag = trim(init_string('tag'));
         $search_text = trim(init_string('text'));
-
-        if ($search_tag !== '' || $search_text !== '') {
-            $filter_fields = $filter_binds = $search_words = array();
-
-            if ($search_text !== '') {
-                $search_words = preg_split('/\s+/isu', $search_text);
-
-                foreach ($search_words as $word_index => $word_value) {
-                    $filter_binds['news_content_' . $word_index] = '%' . $word_value . '%';
-                    $filter_fields[] = '( lower( news_content ) like lower( :news_content_' . $word_index . ' ) )';
-                }
-            }
-
-            if ($search_tag !== '') {
-                $news_list = Db::selectAll('
-                    select news_tag.news_id
-                    from news_tag, tag
-                    where
-                        tag.tag_id = news_tag.tag_id and
-                        lower( tag.tag_title ) = lower( :tag_title )', array('tag_title' => $search_tag));
-
-                $news_list_in = array();
-                foreach ($news_list as $news_index => $news_item) {
-                    $news_list_in[] = $news_item['news_id'];
-                }
-                $news_list_in = count($news_list_in) ? join(', ', $news_list_in) : 0;
-
-                $filter_fields[] = '( news_id in (' . $news_list_in . ' ) )';
-            }
-
-            $filter_fields[] = 'news_active = 1';
-            if (init_cookie('view') != 'all') {
-                $filter_fields[] = 'news_publish = 1';
-            }
-
-            $search_query = 'select count(*) as _search_count from news where ' . join(' and ', $filter_fields);
-            $search_count = Db::selectRow($search_query, $filter_binds);
-            $search_count = $search_count['_search_count'];
-
+        
+        $search_list = $search_words = array();
+        
+        $news_model = Model::factory('news');
+        if ($search_tag = trim(init_string('tag'))) {
+            $search_count = $news_model->getCountByTag($search_tag, $this->only_publish);
             $pages = Paginator::create($search_count, array('by_page' => $records_per_page));
-
-            $search_query = 'select * from news where ' . join(' and ', $filter_fields) . '
-				order by news_date desc limit ' . $pages['by_page'] . ' offset ' . $pages['offset'];
-
-            $search_list = Db::selectAll($search_query, $filter_binds);
-
-            $search_index = 0;
-            foreach ($search_list as $result_index => $result_item) {
-                $search_list[$result_index]['search_index'] = ++$search_index + $pages['offset'];
-
-                $search_list[$result_index]['news_content'] = $this->prepareSearchResult(strip_tags($result_item['news_content']), $search_words);
-
-                $search_list[$result_index]['news_date'] = Date::get($result_item['news_date'], 'd.m.Y H:i');
-                if (substr($search_list[$result_index]['news_date'], 11) == '00:00') {
-                    $search_list[$result_index]['news_date'] = substr($search_list[$result_index]['news_date'], 0, 10);
-                }
-
-                $search_list[$result_index]['news_url'] = System::urlFor(array('controller' => '', 'action' => 'post', 'id' => $result_item['news_id']));
-            }
-
-            $this->view->assign('search_list', $search_list);
-            $this->view->assign('search_text', $search_text);
-            $this->view->assign('search_count', $search_count);
-
-            $this->view->assign('form_url', System::selfUrl());
-
-            $this->view->assign('pages', Paginator::fetch($pages));
+            $search_list = $news_model->getListByTag($search_tag, $this->only_publish, $pages['by_page'], $pages['offset']);
+        } elseif ($search_text = trim(init_string('text'))) {
+            $search_count = $news_model->getCountByText($search_text, $this->only_publish);
+            $pages = Paginator::create($search_count, array('by_page' => $records_per_page));
+            $search_list = $news_model->getListByText($search_text, $this->only_publish, $pages['by_page'], $pages['offset']);
         }
+        
+        foreach ($search_list as $search_item) {
+            $search_item->setNewsContent(
+                $this->prepareSearchResult($search_item->getNewsContent(), $search_text)
+            );
+            
+            $news_date = $search_item->getNewsDate();
+            $search_item->setNewsDate(
+                Date::get($news_date, (substr($news_date, 8) === '000000') ? 'd.m.Y' : 'd.m.Y H:i')
+            );
+        }
+        
+        $this->view->assign('search_list', $search_list);
+        $this->view->assign('search_text', $search_text);
+        $this->view->assign('search_count', $search_count);
+        $this->view->assign('search_index', $pages['offset'] + 1);
+
+        $this->view->assign('pages', Paginator::fetch($pages));
 
         $this->assignTagCloud($search_tag);
 
@@ -94,9 +69,10 @@ class SearchModule extends Module
     /**
      * Преобразование результатов поиска
      */
-    protected function prepareSearchResult($result_text, $search_words, $search_limit = 200)
+    protected function prepareSearchResult($result_text, $search_text, $search_limit = 200)
     {
         $result_text = strip_tags($result_text);
+        $search_words = $search_text !== '' ? preg_split('/\s+/isu', $search_text) : array();
 
         $result_text_length = mb_strlen($result_text);
         $result_pos_min = $result_text_length;
@@ -154,16 +130,8 @@ class SearchModule extends Module
         $max_font_size = max(intval($this->getParam('max_font_size')), 1);
 
         $level_count = max($max_font_size - $min_font_size, 1);
-
-        $tag_list = Db::selectAll('
-			select tag.tag_title, count( news_tag.tag_id ) as tag_count
-			from tag, news_tag, news
-			where tag.tag_id = news_tag.tag_id and
-				news_tag.news_id = news.news_id and 
-				news.news_active = 1 ' . ( ( init_cookie('view') != 'all' ) ? 'and news.news_publish = 1' : '' ) . '
-			group by news_tag.tag_id
-			order by tag_count desc, tag.tag_title
-			limit ' . $tag_cloud_count);
+        
+        $tag_list = Model::factory('news')->getTagList($this->only_publish, $tag_cloud_count);
 
         if (count($tag_list)) {
             $num_links_max = log($tag_list[0]['tag_count']);

@@ -12,6 +12,11 @@ p, a, div, td, input, select, textarea {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 
+textarea {
+	font-size: 14px;
+	font-family: monospace;
+}
+
 a {
 	color: #0066aa;
 	text-decoration: none;
