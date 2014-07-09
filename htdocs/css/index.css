@@ -219,25 +219,21 @@ table.search_result {
 			text-align: right;
 		}
 
-table.portfolio_table {
-	width: 100%;
-	border-collapse: collapse;
+div.portfolio {
+    display: inline-table;
+    width: 240px;
+    height: 200px;
+    text-align: center;
+    padding: 5px;
 }
 
-	table.portfolio_table td {
-		padding: 10px;
-		text-align: center;
-		vertical-align: top;
-	}
-
-	table.portfolio_table td img {
-		border: 1px solid #aaaaaa;
-	}
-
-	table.portfolio_table td a {
-		font-size: 90%;
+    div.portfolio img {
+        border: 1px solid #aaaaaa;
+    }
+    div.portfolio a {
+        font-size: 90%;
 		text-decoration: none;
-	}
+    }
 
 div.tag_cloud {
 	text-align: center;
