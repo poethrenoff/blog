@@ -1,10 +1,8 @@
 <?php
 namespace Adminko\Module;
 
-use Adminko\Tree;
 use Adminko\System;
 use Adminko\Model\Model;
-use Adminko\Db\Db;
 
 class WorkModule extends Module
 {

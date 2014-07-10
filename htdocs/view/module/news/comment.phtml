@@ -1,0 +1,20 @@
+<?php foreach ($this->comment_tree->getChildren() as $comment_item) { ?>
+<?php if ($this->depth) { ?>
+<?php for ($offset = 0; $offset < $this->depth; $offset++) { ?><div class="tree_offset"><?php } ?> 
+<?php } ?>
+<div class="comment_header">
+    <?= $this->escape($comment_item->getCommentAuthor()) ?> (<?= Adminko\Date::get($comment_item->getCommentDate(), 'long') ?>)
+</div>
+<div class="comment_content">
+	<?= $comment_item->getCommentContent() ?> 
+</div>
+<?php if ($this->depth) { ?>
+<?php for ($offset = 0; $offset < $this->depth; $offset++) { ?></div><?php } ?>  
+<?php } ?>
+<div id="comment_<?= $comment_item->getId() ?>" class="footer">
+	<a href="" onclick="showCommentForm( '<?= $comment_item->getId() ?>' ); return false">Оставить комментарий</a>
+</div>
+<?php if ($comment_item->hasChildren()) { ?>
+<?= Adminko\View::block('module/news/comment', array('comment_tree' => $comment_item, 'depth' => $this->depth + 1)) ?> 
+<?php } ?>
+<?php } ?>

@@ -1,11 +1,8 @@
 <?php
 namespace Adminko\Module;
 
-use Adminko\System;
 use Adminko\Paginator;
-use Adminko\Db\Db;
 use Adminko\Model\Model;
-use Adminko\Date;
 
 class SearchModule extends Module
 {
@@ -29,39 +26,37 @@ class SearchModule extends Module
 
         $search_tag = trim(init_string('tag'));
         $search_text = trim(init_string('text'));
-        
-        $search_list = $search_words = array();
-        
+
+        $search_list = array();
+
         $news_model = Model::factory('news');
-        if ($search_tag = trim(init_string('tag'))) {
+        if (!is_empty($search_tag)) {
             $search_count = $news_model->getCountByTag($search_tag, $this->only_publish);
             $pages = Paginator::create($search_count, array('by_page' => $records_per_page));
             $search_list = $news_model->getListByTag($search_tag, $this->only_publish, $pages['by_page'], $pages['offset']);
-        } elseif ($search_text = trim(init_string('text'))) {
+        } elseif (!is_empty($search_text)) {
             $search_count = $news_model->getCountByText($search_text, $this->only_publish);
             $pages = Paginator::create($search_count, array('by_page' => $records_per_page));
             $search_list = $news_model->getListByText($search_text, $this->only_publish, $pages['by_page'], $pages['offset']);
         }
-        
-        foreach ($search_list as $search_item) {
-            $search_item->setNewsContent(
-                $this->prepareSearchResult($search_item->getNewsContent(), $search_text)
-            );
-            
-            $news_date = $search_item->getNewsDate();
-            $search_item->setNewsDate(
-                Date::get($news_date, (substr($news_date, 8) === '000000') ? 'd.m.Y' : 'd.m.Y H:i')
-            );
+
+        if ($search_list) {
+            foreach ($search_list as $search_item) {
+                $search_item->setNewsContent(
+                    $this->prepareSearchResult($search_item->getNewsContent(), $search_text)
+                );
+            }
+
+            $this->view->assign('search_list', $search_list);
+            $this->view->assign('search_text', $search_text);
+            $this->view->assign('search_tag', $search_tag);
+            $this->view->assign('search_count', $search_count);
+            $this->view->assign('search_index', $pages['offset'] + 1);
+
+            $this->view->assign('pages', Paginator::fetch($pages));
         }
-        
-        $this->view->assign('search_list', $search_list);
-        $this->view->assign('search_text', $search_text);
-        $this->view->assign('search_count', $search_count);
-        $this->view->assign('search_index', $pages['offset'] + 1);
 
-        $this->view->assign('pages', Paginator::fetch($pages));
-
-        $this->assignTagCloud($search_tag);
+        $this->view->assign('tag_cloud', $this->getTagCloud());
 
         $this->content = $this->view->fetch('module/search/search');
     }
@@ -122,7 +117,7 @@ class SearchModule extends Module
     /**
      * Облако тегов
      */
-    protected function assignTagCloud($search_tag = '')
+    protected function getTagCloud()
     {
         $tag_cloud_count = max(intval($this->getParam('tag_cloud_count')), 1);
 
@@ -130,31 +125,30 @@ class SearchModule extends Module
         $max_font_size = max(intval($this->getParam('max_font_size')), 1);
 
         $level_count = max($max_font_size - $min_font_size, 1);
-        
-        $tag_list = Model::factory('news')->getTagList($this->only_publish, $tag_cloud_count);
+
+        $tag_list = Model::factory('news')->getTagCloud($this->only_publish, $tag_cloud_count);
 
         if (count($tag_list)) {
-            $num_links_max = log($tag_list[0]['tag_count']);
-            $num_links_min = log($tag_list[count($tag_list) - 1]['tag_count']);
+            $first_tag = reset($tag_list);
+            $last_tag = end($tag_list);
+
+            $num_links_max = log($first_tag->getTagCount());
+            $num_links_min = log($last_tag->getTagCount());
             $level_step = ( $num_links_max - $num_links_min ) / $level_count;
 
             foreach ($tag_list as $tag_index => $tag_item) {
                 if ($level_step > 0) {
-                    $tag_list[$tag_index]['font_size'] = round($min_font_size + ( log($tag_item['tag_count']) - $num_links_min ) / $level_step);
+                    $tag_item->setFontSize(round($min_font_size + (log($tag_item->getTagCount()) - $num_links_min) / $level_step));
                 } else {
-                    $tag_list[$tag_index]['font_size'] = round($min_font_size + $level_count / 2);
+                    $tag_item->setFontSize(round($min_font_size + $level_count / 2));
                 }
-
-                $tag_list[$tag_index]['tag_url'] = System::urlFor(array('controller' => 'search', 'tag' => $tag_item['tag_title']));
-
-                $tag_list[$tag_index]['tag_selected'] = $tag_item['tag_title'] == $search_tag;
             }
 
             usort($tag_list, function($a, $b) {
-                return strcmp(mb_strtolower($a['tag_title']), mb_strtolower($b['tag_title']));
+                return strcmp(mb_strtolower($a->getTagTitle()), mb_strtolower($b->getTagTitle()));
             });
         }
 
-        $this->view->assign('tag_list', $tag_list);
+        return $tag_list;
     }
 }

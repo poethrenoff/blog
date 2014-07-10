@@ -1,12 +1,12 @@
 <?php foreach ($this->news_list as $news_item) { ?>
 <div class="header">
-<span class="title"><a href="<?= $news_item['news_url'] ?>"><?= $news_item['news_date'] ?></a><?php if (!$news_item['news_publish']) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($news_item['tag_list'] as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item['tag_url'] ?>" class="tag"><?= $tag_item['tag_title'] ?></a><?php } ?> 
+<span class="title"><a href="<?= $news_item->getNewsUrl() ?>"><?= $news_item->getViewNewsDate() ?></a><?php if (!$news_item->getNewsPublish()) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($news_item->getTagList() as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item->getTagUrl() ?>" class="tag"><?= $tag_item->getTagTitle() ?></a><?php } ?> 
 </div>
 <div class="content">
-	<?= $news_item['news_content'] ?>  
+	<?= $news_item->getNewsContent() ?>  
 </div>
 <div class="footer">
-    <?php if ($news_item['_comment_count']) { ?><a href="<?= $news_item['news_url'] ?>">Комментариев: <?= $news_item['_comment_count'] ?></a>&nbsp;|&nbsp;<?php } ?><a href="<?= $news_item['comment_url'] ?>">Оставить комментарий</a>
+    <?php if ($news_item->getCommentCount()) { ?><a href="<?= $news_item->getNewsUrl() ?>">Комментариев: <?= $news_item->getCommentCount() ?></a>&nbsp;|&nbsp;<?php } ?><a href="<?= $news_item->getReplyUrl() ?>">Оставить комментарий</a>
 </div>
 <?php } ?>
 <?php if ($this->pages) { ?>

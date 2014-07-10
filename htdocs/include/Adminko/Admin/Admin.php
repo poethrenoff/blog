@@ -478,17 +478,6 @@ abstract class Admin extends \Adminko\Object
             }
         }
         
-        foreach (Metadata::$objects as $object_name => $object_desc)
-        {
-            if (isset($object_desc['fields']) && $object_desc['fields']) {
-                continue;
-            }
-
-            if (!(isset($object_desc['class']) && $object_desc['class'])) {
-                throw new \Exception('Ошибка в описании утилиты "' . $object_name . '". Не указан класс объекта.');
-            }
-        }
-        
         $metadata_object_list = array(); 
         foreach (Metadata::$objects as $object_name => $object_desc) {
             if (!(isset($object_desc['internal']) && $object_desc['internal'])) {

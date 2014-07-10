@@ -22,7 +22,6 @@ class Metadata
          */
         'news' => array(
             'title' => 'Новости',
-            'class' => 'News',
             'fields' => array(
                 'news_id' => array( 'title' => 'Идентификатор', 'type' => 'pk' ),
                 'news_content' => array( 'title' => 'Текст', 'type' => 'text', 'editor' => 1, 'main' => 1, 'errors' => array('require') ),
@@ -48,7 +47,7 @@ class Metadata
             'fields' => array(
                 'comment_id' => array( 'title' => 'Идентификатор', 'type' => 'pk' ),
                 'comment_news' => array( 'title' => 'Новость', 'type' => 'table', 'table' => 'news', 'errors' => array('require'), 'no_edit' => 1, 'no_filter' => 1 ),
-                'comment_parent' => array( 'title' => 'Родительский комментарий', 'type' => 'table', 'table' => 'comment', 'no_edit' => 1 ),
+                'comment_parent' => array( 'title' => 'Родительский комментарий', 'type' => 'parent', 'no_edit' => 1 ),
                 'comment_content' => array( 'title' => 'Текст', 'type' => 'text', 'main' => 1, 'editor' => 1, 'errors' => array('require') ),
                 'comment_author' => array( 'title' => 'Автор', 'type' => 'string', 'errors' => array('require') ),
                 'comment_date' => array( 'title' => 'Дата публикации', 'type' => 'datetime', 'show' => 1, 'sort' => 'desc', 'errors' => array('require') ),
@@ -98,7 +97,6 @@ class Metadata
          * Таблица "Произведения"
          */
         'work' => array(
-            'class' => 'Work',
             'title' => 'Произведения',
             'fields' => array(
                 'work_id' => array( 'title' => 'Идентификатор', 'type' => 'pk' ),
@@ -150,7 +148,6 @@ class Metadata
          */
         'page' => array(
             'title' => 'Разделы',
-            'class' => 'Page',
             'fields' => array(
                 'page_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'page_parent' => array('title' => 'Родительский раздел', 'type' => 'parent'),
@@ -174,7 +171,6 @@ class Metadata
          */
         'block' => array(
             'title' => 'Блоки',
-            'class' => 'Block',
             'fields' => array(
                 'block_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'block_page' => array('title' => 'Раздел', 'type' => 'table', 'table' => 'page', 'errors' => array('require')),
@@ -192,7 +188,6 @@ class Metadata
          */
         'layout' => array(
             'title' => 'Шаблоны',
-            'class' => 'Layout',
             'fields' => array(
                 'layout_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'layout_title' => array('title' => 'Название', 'type' => 'string', 'main' => 1, 'errors' => array('require')),
@@ -228,7 +223,6 @@ class Metadata
          */
         'module' => array(
             'title' => 'Модули',
-            'class' => 'Module',
             'fields' => array(
                 'module_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'module_title' => array('title' => 'Название', 'type' => 'string', 'main' => 1, 'errors' => array('require')),
@@ -245,7 +239,6 @@ class Metadata
          */
         'module_param' => array(
             'title' => 'Параметры модулей',
-            'class' => 'ModuleParam',
             'fields' => array(
                 'param_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'param_module' => array('title' => 'Модуль', 'type' => 'table', 'table' => 'module', 'errors' => array('require')),
@@ -274,7 +267,6 @@ class Metadata
          */
         'param_value' => array(
             'title' => 'Значения параметров модулей',
-            'class' => 'ParamValue',
             'fields' => array(
                 'value_id' => array('title' => 'Идентификатор', 'type' => 'pk'),
                 'value_param' => array('title' => 'Параметр', 'type' => 'table', 'table' => 'module_param', 'errors' => array('require')),
@@ -373,7 +365,6 @@ class Metadata
          */
         'similarity' => array(
             'title' => 'Поиск дубликатов',
-            'class' => 'Similarity'
         ),
    );
 }

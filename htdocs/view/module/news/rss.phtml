@@ -1,23 +1,24 @@
+<?php $http_host = filter_input(INPUT_SERVER, 'HTTP_HOST'); ?>
 <?= '<?xml version="1.0" encoding="UTF-8"?>' ?> 
 <rss version="2.0">
 	<channel>
 		<title>Не дождетесь!</title>
-        <link>http://<?= filter_input(INPUT_SERVER, 'HTTP_HOST') ?>/</link>
+        <link>http://<?= $http_host ?>/</link>
 		<description>Блог о здоровье и его отсутствии</description>
 		<copyright>Copyright 2003-<?= date('Y') ?>, ДК</copyright>
 		<webMaster>webmaster@testea.ru (Константинов Дмитрий)</webMaster>
 		<image>
-			<url>http://<?= filter_input(INPUT_SERVER, 'HTTP_HOST') ?>/image/logo.gif</url>
+			<url>http://<?= $http_host ?>/image/logo.gif</url>
 			<title>Не дождетесь!</title>
-			<link>http://<?= filter_input(INPUT_SERVER, 'HTTP_HOST') ?>/</link>
+			<link>http://<?= $http_host ?>/</link>
 		</image>
 <?php foreach ($this->news_list as $news_item) { ?>
 		<item>
-			<title><?= $news_item['news_date'] ?></title>
-			<link><?= $news_item['news_link'] ?></link>
-			<description><![CDATA[<?= $news_item['news_content'] ?>]]></description>
-			<guid><?= $news_item['news_link'] ?></guid>
-			<pubDate><?= $news_item['news_pub_date'] ?></pubDate>
+			<title><?= $news_item->getViewNewsDate() ?></title>
+			<link><?= $news_item->getNewsUrl(true) ?></link>
+			<description><![CDATA[<?= $news_item->getNewsContent() ?>]]></description>
+			<guid><?= $news_item->getNewsUrl(true) ?></guid>
+			<pubDate><?= $news_item->getPubNewsDate() ?></pubDate>
 		</item>
 <?php } ?>
 	</channel>

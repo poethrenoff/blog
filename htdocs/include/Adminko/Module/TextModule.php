@@ -10,7 +10,7 @@ class TextModule extends Module
     {
         try {
             $item = Model::factory('text')->get($this->getParam('id'));
-        } catch (AlarmException $e) {
+        } catch (\AlarmException $e) {
             System::notFound();
         }
         

@@ -31,10 +31,10 @@
 </script>
 
 <div class="header">
-	<span class="title"><?= $this->news_date ?><?php if (!$this->news_publish) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($this->tag_list as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item['tag_url'] ?>" class="tag"><?= $tag_item['tag_title'] ?></a><?php } ?> 
+	<span class="title"><?= $this->getViewNewsDate() ?><?php if (!$this->getNewsPublish()) { ?>&nbsp;&nbsp;<img src="/image/design/lock.gif" alt=""/><?php } ?></span><?php foreach ($this->getTagList() as $tag_item) { ?>&nbsp;&nbsp;<a href="<?= $tag_item->getTagUrl() ?>" class="tag"><?= $tag_item->getTagTitle() ?></a><?php } ?> 
 </div>
 <div class="content">
-	<?= $this->news_content ?> 
+	<?= $this->getNewsContent() ?> 
 </div>
 <?php if ($this->error) { ?>
 <div class="message">
@@ -45,7 +45,7 @@
 	<a href="" onclick="showCommentForm( '0' ); return false">Оставить комментарий</a>
 </div>
 
-<form id="comment_form" class="comment_form" action="<?= $this->form_url ?>" method="post">
+<form id="comment_form" class="comment_form" action="<?= Adminko\System::selfUrl() ?>" method="post">
 	<table class="comment_table">
 		<col class="col1"/><col class="col2"/><col class="col3"/>
 		<tr>
@@ -86,23 +86,11 @@
 		</tr>
 	</table>
 </form>
-<?php foreach ($this->comment_tree as $comment_item) { ?>
-<?php if ($comment_item['_depth']) { ?>
-<?php for ($offset = 0; $offset < $comment_item['_depth']; $offset++) { ?><div class="tree_offset"><?php } ?> 
+
+<?php if ($this->comment_tree) { ?>
+<?= Adminko\View::block('module/news/comment', array('comment_tree' => $this->comment_tree, 'depth' => 0)) ?> 
 <?php } ?>
-<div class="comment_header">
-    <?= $this->escape($comment_item['comment_author']) ?> (<?= $this->escape($comment_item['comment_date']) ?>)
-</div>
-<div class="comment_content">
-	<?= $comment_item['comment_content'] ?> 
-</div>
-<?php if ($comment_item['_depth']) { ?>
-<?php for ($offset = 0; $offset < $comment_item['_depth']; $offset++) { ?></div><?php } ?> 
-<?php } ?>
-<div id="comment_<?= $comment_item['comment_id'] ?>" class="footer">
-	<a href="" onclick="showCommentForm( '<?= $comment_item['comment_id'] ?>' ); return false">Оставить комментарий</a>
-</div>
-<?php } ?>
+
 <?php if ($this->show_form !== null) { ?>
 <script type="text/javascript">
 	showCommentForm( '<?= $this->show_form ?>' );

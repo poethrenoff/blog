@@ -9,8 +9,8 @@
 	</table>
 </form>
 <div class="tag_cloud">
-<?php foreach ($this->tag_list as $tag_item) { ?>
-	<a href="<?= $tag_item['tag_url'] ?>" style="font-size: <?= $tag_item['font_size'] ?>px" title="<?= $this->escape($tag_item['tag_title']) ?> (<?= $tag_item['tag_count'] ?>)"<?php if ($tag_item['tag_selected']) { ?> class="selected"<?php } ?>><?= $this->escape($tag_item['tag_title']) ?></a>
+<?php foreach ($this->tag_cloud as $tag_item) { ?>
+	<a href="<?= $tag_item->getTagUrl() ?>" style="font-size: <?= $tag_item->getFontSize() ?>px" title="<?= $this->escape($tag_item->getTag_title()) ?> (<?= $tag_item->getTagCount() ?>)"<?php if ($tag_item->getTagTitle() == $this->search_tag) { ?> class="selected"<?php } ?>><?= $this->escape($tag_item->getTagTitle()) ?></a>
 <?php } ?>
 </div>
 <?php if ($this->search_list) { ?>
@@ -21,7 +21,7 @@
 			<?= $this->search_index++ ?>.
 		</td>
 		<td>
-			<span class="title"><a href="<?= $search_item->getNewsUrl() ?>"><?= $search_item->getNewsDate() ?></a></span><p><?= $search_item->getNewsContent() ?></p>
+			<span class="title"><a href="<?= $search_item->getNewsUrl() ?>"><?= $search_item->getViewNewsDate() ?></a></span><p><?= $search_item->getNewsContent() ?></p>
 		</td>
 	</tr>
 </table>

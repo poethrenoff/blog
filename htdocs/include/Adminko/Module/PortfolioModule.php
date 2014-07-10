@@ -2,7 +2,6 @@
 namespace Adminko\Module;
 
 use Adminko\Paginator;
-use Adminko\Db\Db;
 use Adminko\Model\Model;
 
 class PortfolioModule extends Module
@@ -30,5 +29,4 @@ class PortfolioModule extends Module
 
         $this->content = $this->view->fetch('module/portfolio/list');
     }
-
 }

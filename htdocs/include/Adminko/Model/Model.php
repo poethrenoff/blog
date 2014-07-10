@@ -56,22 +56,37 @@ class Model
         if (!preg_match("/^(get|set)(\w+)/", $method, $matches)) {
             throw new \AlarmException("Ошибка. Метод " . get_called_class() . "::{$method}() не найден.");
         }
+        
         $accessor = $matches[1];
         $field_name = to_field_name($matches[2]);
-        if (!(isset($this->fields_desc[$field_name]) && is_array($this->fields_desc[$field_name]))) {
-            throw new \AlarmException("Ошибка. Поле {$this->object}->{$field_name} не описано в метаданных.");
-        }
+        $field_described = isset($this->fields_desc[$field_name]) && is_array($this->fields_desc[$field_name]);
         
-        $field = $this->fields[$field_name];
         switch ($accessor) {
             case 'get':
-                return $field->get();
+                if ($field_described) {
+                    return $this->fields[$field_name]->get();
+                } else {
+                    return $this->$field_name;
+                }
             case 'set':
                 if (!empty($vars)) {
-                    $field->set($vars[0]);
+                   if ($field_described) {
+                       $this->fields[$field_name]->set($vars[0]);
+                   } else {
+                       $this->$field_name = $vars[0];
+                   }
                 }
                 return $this;
         }
+    }
+    
+    // Защита от несанкционированного доступа к полям
+    public function __get($field_name){
+        throw new \AlarmException("Ошибка. Поле " . get_called_class() . "::{$field_name} не найдено.");
+    }
+    // Защита от несанкционированного доступа к полям
+    public function __set($field_name, $value){
+        throw new \AlarmException("Ошибка. Поле " . get_called_class() . "::{$field_name} не найдено.");
     }
 
     // Создание объекта модели
@@ -185,7 +200,7 @@ class Model
                     throw new \AlarmException('Ошибочное значение поля "' . $field_desc['title'] . '".');
                 }
                 
-                $get_method = 'get_' . $field_name;
+                $get_method = 'get' . to_field_name($field_name);
                 $record[$field_name] = $this->$get_method();
             }
         }

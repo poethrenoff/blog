@@ -46,5 +46,4 @@ class WorkTable extends Table
 
         return "\"{$work_title}...\"";
     }
-
 }
