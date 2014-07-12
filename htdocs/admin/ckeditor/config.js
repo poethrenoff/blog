@@ -9,14 +9,14 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.uiColor = '#AADC6E';
 	
 	config.language = 'ru';
-	config.removePlugins = 'save';
+	config.removePlugins = 'save,liststyle,tabletools,contextmenu';
 	config.filebrowserUploadUrl = '/admin/fm/upload_file';
-	config.disableNativeSpellChecker = false;
 	config.allowedContent = true; // disable ACF
+	config.disableNativeSpellChecker = false;
 	
 	config.toolbarGroups = [
 		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing', groups: [ 'find', 'selection' ] },
 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
