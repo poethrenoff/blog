@@ -13,7 +13,7 @@ $put_url = '/login/page.html?put';
 $add_url = '/login/page.html?add';
 
 $user_login = 'poethrenoff';
-$user_password = 'luubonEbbMbVNFG';
+$user_password = '**********';
 $user_agent = 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.14 Safari/534.24';
 
 //    $server_rubric = '8'; $local_rubric = '6';   // Приятные неожиданности (45)

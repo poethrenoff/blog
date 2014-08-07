@@ -10,7 +10,7 @@ $list_url = '/login/page.html?list';
 $put_url = '/login/page.html?put';
 
 $user_login = 'poethrenoff';
-$user_password = 'luubonEbbMbVNFGiDBNh';
+$user_password = '**********';
 $user_agent = 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.14 Safari/534.24';
 
 //    $server_rubric = '18'; // Всякое, прочее и остальное
