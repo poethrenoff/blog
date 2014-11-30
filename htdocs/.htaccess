@@ -22,6 +22,7 @@ php_value iconv.output_encoding "utf-8"
 
 RewriteEngine On
 
+RewriteRule ^work http://poethrenoff.tk/ [L]
 RewriteRule ^favicon.ico image/favicon.ico [L]
 
 RewriteRule ^(upload/.+\.(gif|jpg|jpe|jpeg|png))/(c|r)/(\d+)/(\d+)$ image/image.php?url=/$1&method=$3&width=$4&height=$5 [L]
