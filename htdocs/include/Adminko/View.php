@@ -23,17 +23,18 @@ class View
         // Если переменая - объект
         if (is_object($name)) {
             $this->object = $name;
-            // Если переменая - массив
+        // Если переменая - массив
         } elseif (is_array($name)) {
             foreach ($name as $key => $val) {
                 $this->$key = $val;
             }
-            // Если переменая - строка
+        // Если переменая - строка
         } elseif (is_string($name)) {
             $this->$name = $data;
         } else {
             throw new \AlarmException('Недопустимый тип переменной');
         }
+        return $this;
     }
 
     /**
@@ -170,9 +171,7 @@ class View
     {
         $view = new View();
 
-        foreach ($params as $key => $value) {
-            $view->assign($key, $value);
-        }
+        $view->assign($params);
 
         return $view->fetch($template);
     }

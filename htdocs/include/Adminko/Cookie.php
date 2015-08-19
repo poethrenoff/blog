@@ -11,7 +11,7 @@ class Cookie
     }
 
     // Возвращает массив (или произвольный объект) из кук.
-    static function getВata($name)
+    static function getData($name)
     {
         if (!isset($_COOKIE[$name])) {
             return false;

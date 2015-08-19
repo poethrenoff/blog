@@ -488,7 +488,7 @@ class System
         if (PRODUCTION) {
             if (!$admin || !$return) {
                 @file_put_contents($error_file, $error_log, FILE_APPEND);
-                @sendmail::send(ERROR_EMAIL, ERROR_EMAIL, $_SERVER['HTTP_HOST'], ERROR_SUBLECT, $error_content);
+                @Mail::send(ERROR_EMAIL, ERROR_EMAIL, $_SERVER['HTTP_HOST'], ERROR_SUBLECT, $error_content);
             }
 
             if ($admin) {

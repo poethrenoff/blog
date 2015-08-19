@@ -19,7 +19,7 @@ class Curl
     {
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_USERAGENT, self::USERAGENT);
-        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);

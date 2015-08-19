@@ -144,8 +144,7 @@ class Upload
      */
     private function prepareFilename($file_name)
     {
-        $file_name = strtolower(to_translit($file_name));        
-        $file_name = preg_replace('/[^a-z0-9_\.\,\[\]\(\)\~\- ]/i', '', $file_name);
+        $file_name = to_file_name($file_name);
         
         $pathinfo = pathinfo($file_name);
         $base = $pathinfo['filename'];
@@ -153,7 +152,7 @@ class Upload
 
         $n = 0;
         while (file_exists($this->upload_path . $file_name)) {
-            $file_name = $base . ' (' . ++$n . ')' . $ext;
+            $file_name = $base . '_' . ++$n . $ext;
         }
         
         return $file_name;
@@ -172,7 +171,9 @@ class Upload
      */
     private function prepareTypes($types)
     {
-        if (!is_array($types)) {
+        if (is_empty($types)) {
+            $types = array();
+        } elseif (!is_array($types)) {
             $types = explode('|', $types);
         }
         return array_map('strtolower', $types);

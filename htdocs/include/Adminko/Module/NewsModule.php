@@ -7,7 +7,7 @@ use Adminko\System;
 use Adminko\Purifier;
 use Adminko\Paginator;
 use Adminko\View;
-use Adminko\Sendmail;
+use Adminko\Mail;
 use Adminko\Model\Model;
 
 class NewsModule extends Module
@@ -122,7 +122,7 @@ class NewsModule extends Module
 
         $message = $mail_view->fetch('module/news/mail');
 
-        Sendmail::send($admin_email, $from_email, $from_name, $subject, $message);
+        Mail::send($admin_email, $from_email, $from_name, $subject, $message);
 
         setcookie('author', $comment_author, time() + 60 * 60 * 24 * 30, '/');
 

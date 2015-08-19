@@ -142,6 +142,19 @@ function decl_of_num($number, $titles, $view_number = true)
     return ($view_number ? $number . ' ' : '') . $titles[($value % 100 > 4 && $value % 100 < 20) ? 2 : $cases[min($value % 10, 5)]];
 }
 
+function format_size($size, $precision = 2, $view_size = true)
+{
+	$units = array('Б', 'кБ', 'МБ', 'ГБ', 'ТБ', 'ПБ'); 
+	
+	$size = abs($size);
+	$pow = floor(($size ? log($size) : 0) / log(1024)); 
+	$pow = min($pow, count($units) - 1); 
+	
+	$size /= pow(1024, $pow);
+	
+	return ($view_size ? round($size, $precision) . ' ' : '') . $units[$pow]; 
+}
+
 function generate_key($max = 128)
 {
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -209,18 +222,27 @@ function strip_tags_attributes($string, $allowtags = null, $allowattributes = nu
 function to_translit($string)
 {
     $replace = array(
-        "а" => "a", "А" => "a", "б" => "b", "Б" => "b", "в" => "v", "В" => "v",
-        "г" => "g", "Г" => "g", "д" => "d", "Д" => "d", "е" => "e", "Е" => "e", "ж" => "zh", "Ж" => "zh",
-        "з" => "z", "З" => "z", "и" => "i", "И" => "i", "й" => "y", "Й" => "y", "к" => "k", "К" => "k",
-        "л" => "l", "Л" => "l", "м" => "m", "М" => "m", "н" => "n", "Н" => "n", "о" => "o", "О" => "o",
-        "п" => "p", "П" => "p", "р" => "r", "Р" => "r", "с" => "s", "С" => "s", "т" => "t", "Т" => "t",
-        "у" => "u", "У" => "u", "ф" => "f", "Ф" => "f", "х" => "h", "Х" => "h", "ц" => "c", "Ц" => "c",
-        "ч" => "ch", "Ч" => "ch", "ш" => "sh", "Ш" => "sh", "щ" => "sch", "Щ" => "sch",
-        "ъ" => "", "Ъ" => "", "ы" => "y", "Ы" => "y", "ь" => "", "Ь" => "", "э" => "e", "Э" => "e",
-        "ю" => "yu", "Ю" => "yu", "я" => "ya", "Я" => "ya", "і" => "i", "І" => "i",
-        "ї" => "yi", "Ї" => "yi", "є" => "e", "Є" => "e", "ё" => "e", "Ё" => "e"
+        "а" => "a", "А" => "A", "б" => "b", "Б" => "B", "в" => "v", "В" => "V",
+        "г" => "g", "Г" => "G", "д" => "d", "Д" => "D", "е" => "e", "Е" => "E", "ж" => "zh", "Ж" => "Zh",
+        "з" => "z", "З" => "Z", "и" => "i", "И" => "I", "й" => "y", "Й" => "Y", "к" => "k", "К" => "K",
+        "л" => "l", "Л" => "L", "м" => "m", "М" => "M", "н" => "n", "Н" => "N", "о" => "o", "О" => "O",
+        "п" => "p", "П" => "P", "р" => "r", "Р" => "R", "с" => "s", "С" => "S", "т" => "t", "Т" => "T",
+        "у" => "u", "У" => "U", "ф" => "f", "Ф" => "F", "х" => "h", "Х" => "H", "ц" => "c", "Ц" => "C",
+        "ч" => "ch", "Ч" => "Ch", "ш" => "sh", "Ш" => "Sh", "щ" => "sch", "Щ" => "Sch",
+        "ъ" => "", "Ъ" => "", "ы" => "y", "Ы" => "Y", "ь" => "", "Ь" => "", "э" => "e", "Э" => "E",
+        "ю" => "yu", "Ю" => "Yu", "я" => "ya", "Я" => "Ya", "і" => "i", "І" => "I",
+        "ї" => "yi", "Ї" => "Yi", "є" => "e", "Є" => "E", "ё" => "yo", "Ё" => "Yo"
     );
     return iconv("UTF-8", "UTF-8//IGNORE", strtr($string, $replace));
+}
+
+function to_file_name($string, $strict = false)
+{
+    $result = strtolower(to_translit($string));
+    $result = preg_replace('/\s+' . ($strict ? '|\-' : '') . '/', '_', $result);
+    $result = preg_replace('/[^a-z0-9\_' . ($strict ? '' : '\.\,\[\]\(\)\~\-') . ']/i', '', $result);
+    
+    return $result;
 }
 
 function to_class_name($string)
