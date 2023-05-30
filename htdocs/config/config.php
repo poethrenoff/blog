@@ -11,7 +11,7 @@ ini_set('date.timezone', 'Europe/Moscow');
 define('SITE_TITLE', 'Не дождетесь!');
 
 define('DB_TYPE', 'mysql'); // mysql, pgsql, sqlite
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'mysql');
 define('DB_NAME', 'blog');
 define('DB_USER', 'blog');
 define('DB_PASSWORD', 'blog');
@@ -23,7 +23,7 @@ define('VIEW_DIR', APP_DIR . 'view' . DIRECTORY_SEPARATOR);
 define('UPLOAD_DIR', APP_DIR . 'upload' . DIRECTORY_SEPARATOR);
 define('UPLOAD_ALIAS', '/upload/');
 
-define('CACHE_SITE', false);
+define('CACHE_SITE', true);
 define('CACHE_TYPE', 'file'); // file, memory
 define('CACHE_TIME', 900);
 define('CACHE_DIR', dirname(APP_DIR) . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR);

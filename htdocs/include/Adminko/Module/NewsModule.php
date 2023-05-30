@@ -29,12 +29,12 @@ class NewsModule extends Module
         $news_by_page = $this->getParam('news_by_page');
 
         $news_model = Model::factory('news');
-        $news_count = $news_model->getCount($this->only_publish);
+        $news_count = $news_model->getNewsCount($this->only_publish);
 
         if ($news_count) {
             $pages = Paginator::create($news_count, array('by_page' => $news_by_page));
 
-            $news_list = $news_model->getList($this->only_publish, $pages['by_page'], $pages['offset']);
+            $news_list = $news_model->getNewsList($this->only_publish, $pages['by_page'], $pages['offset']);
 
             $this->view->assign('news_list', $news_list);
             $this->view->assign('pages', Paginator::fetch($pages));
@@ -49,7 +49,7 @@ class NewsModule extends Module
         try {
             $news_item = Model::factory('news')->getNewsItem(System::id(), $this->only_publish);
         } catch (\AlarmException $e) {
-            Sysyem::notFound();
+            System::notFound();
         }
 
         if (init_string('action') == 'comment') {
@@ -68,8 +68,7 @@ class NewsModule extends Module
         $comment_list = Model::factory('comment')->getList(array('comment_news' => System::id()), array('comment_date' => 'asc'));
         $comment_tree = Model::factory('comment')->getTree($comment_list);
 
-        $this->view->assign('comment_author', init_string('comment_author') ?
-                init_string('comment_author') : init_cookie('author') );
+        $this->view->assign('comment_author', init_string('comment_author') ?: init_cookie('author'));
         $this->view->assign('comment_content', init_string('comment_content'));
 
         $this->view->assign('comment_tree', $comment_tree);

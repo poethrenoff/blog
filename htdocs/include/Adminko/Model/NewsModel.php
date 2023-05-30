@@ -27,7 +27,7 @@ class NewsModel extends Model
         return array($filter_cond, $filter_bind);
     }
     
-    public function getCount($only_publish)
+    public function getNewsCount($only_publish)
     {
         list($filter_cond, $filter_bind) = $this->getCondition($only_publish);
         return Db::selectCell('
@@ -35,7 +35,7 @@ class NewsModel extends Model
             where ' . join(' and ', $filter_cond), $filter_bind);
     }
     
-    public function getList($only_publish, $limit, $offset)
+    public function getNewsList($only_publish, $limit, $offset)
     {
         list($filter_cond, $filter_bind) = $this->getCondition($only_publish);
         $records = Db::selectAll('

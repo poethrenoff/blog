@@ -4,7 +4,7 @@ namespace Adminko\Module;
 use Adminko\System;
 use Adminko\View;
 
-abstract class Module extends \Adminko\Object
+abstract class Module extends \Adminko\Main
 {
     // Параметры модуля
     protected $params = array();

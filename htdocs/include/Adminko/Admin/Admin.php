@@ -7,7 +7,7 @@ use Adminko\Metadata;
 use Adminko\View;
 use Adminko\Db\Db;
 
-abstract class Admin extends \Adminko\Object
+abstract class Admin extends \Adminko\Main
 {
     // Метаданные объекта
     protected $object_desc = array();
