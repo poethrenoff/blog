@@ -232,7 +232,7 @@ abstract class Admin extends \Adminko\Main
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
-    private static final function prepareMetadata()
+    private static function prepareMetadata()
     {
         foreach (Metadata::$objects as $object_name => $object_desc)
         {

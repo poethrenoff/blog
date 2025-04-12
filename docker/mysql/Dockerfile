@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mysql:8.0
 
 ENV MYSQL_DATABASE=blog
 ENV MYSQL_USER=blog

@@ -6,7 +6,7 @@ use Adminko\Valid\Valid;
 class IntField extends Field
 {
     public function set($content) {
-        $this->value = (string) $content !== '' ? $content : null;
+        $this->value = (string) $content !== '' ? (int) $content : null;
         return $this;
     }
     
